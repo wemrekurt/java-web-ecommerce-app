@@ -35,6 +35,9 @@ public class routesController  extends HttpServlet {
             	product.showProduct();
             	break;
         	// Admin
+            case "/404":
+            	showErrorPage(request, response);
+            	break;
             case "/admin/":
             	admin.showAdmin();
             	break;
@@ -85,11 +88,21 @@ public class routesController  extends HttpServlet {
             	admin.listCustomer();
                 break;  
             default:
-                System.out.println("default");
+            	String path = request.getContextPath();
+            	response.setStatus(response.SC_MOVED_TEMPORARILY);
+                response.setHeader("Location", path + "/404");  
                 break;
             }
         } catch (SQLException ex) {
             throw new ServletException(ex);
         }
     }
+	
+	public void showErrorPage(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("NotFound.jsp");
+        dispatcher.forward(request, response);
+    }
+	
+	
 }
