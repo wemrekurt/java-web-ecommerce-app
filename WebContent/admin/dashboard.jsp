@@ -6,10 +6,17 @@
 <z:layout pageTitle="Yönetim Paneli">
 	<div class="row">
 		<div class="col-md-3">
-			<a href="${pageContext.request.contextPath}/admin/product/list" class="btn btn-danger btn-lg" role="button">
+			<a href="${pageContext.request.contextPath}/admin/product/list" class="btn btn-danger btn-lg btn-block" role="button">
 				<i class="fa fa-list"></i>
 				<br>
 				${productSize} Ürün
+			</a>
+		</div>
+		<div class="col-md-3">
+			<a href="${pageContext.request.contextPath}/admin/customer/list" class="btn btn-warning btn-lg btn-block" role="button">
+				<i class="fa fa-list"></i>
+				<br>
+				${customerSize} Müşteri
 			</a>
 		</div>
 	</div>

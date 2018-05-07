@@ -37,21 +37,6 @@ public class ProductController extends HttpServlet {
     }
  
     
-    public void showAdmin()
-            throws SQLException, IOException, ServletException {
-    	int productSize = productDAO.countProduct();
-    	request.setAttribute("productSize", productSize);
-    	RequestDispatcher dispatcher = request.getRequestDispatcher("dashboard.jsp");
-        dispatcher.forward(request, response);
-    }
-    public void adminListProduct()
-            throws SQLException, IOException, ServletException {
-        List<Product> listProduct = productDAO.listAllProducts();
-        
-        request.setAttribute("listProduct", listProduct);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-        dispatcher.forward(request, response);
-    }
     public void showProduct()
     		throws SQLException, IOException, ServletException {
     	int id = Integer.parseInt(request.getParameter("id"));

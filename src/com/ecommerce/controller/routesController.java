@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ecommerce.controller.CustomerController;
 import com.ecommerce.controller.ProductController;
+import com.ecommerce.controller.AdminController;
 
 public class routesController  extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -27,14 +28,17 @@ public class routesController  extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         CustomerController customer = new CustomerController(request, response);
         ProductController product = new ProductController(request, response);
+        AdminController admin = new AdminController(request, response);
         try {
             switch (action) {
             case "/show":
             	product.showProduct();
             	break;
+        	// Admin
             case "/admin/":
-            	product.showAdmin();
+            	admin.showAdmin();
             	break;
+        	// Product Admin
             case "/admin/product/show":
             	break;
             case "/admin/product/new":
@@ -53,11 +57,29 @@ public class routesController  extends HttpServlet {
                 product.updateProduct();
                 break;
             case "/admin/product/list":
-            	product.adminListProduct();
+            	admin.listProduct();
                 break;
+            // Customer Admin
             case "/admin/customer/show":
-                customer.showCustomer();
-                break;          
+            	break;
+            case "/admin/customer/new":
+            	customer.showNewForm();
+                break;
+            case "/admin/customer/insert":
+            	customer.insertCustomer();
+                break;
+            case "/admin/customer/delete":
+            	customer.deleteCustomer();
+                break;
+            case "/admin/customer/edit":
+            	customer.showEditForm();
+                break;
+            case "/admin/customer/update":
+            	customer.updateCustomer();
+                break;
+            case "/admin/customer/list":
+            	admin.listCustomer();
+                break;  
             default:
                 System.out.println("default");
                 break;
