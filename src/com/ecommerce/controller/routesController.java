@@ -38,6 +38,10 @@ public class routesController  extends HttpServlet {
             case "/admin/":
             	admin.showAdmin();
             	break;
+        	// Order Admin
+            case "/admin/order/list":
+            	admin.listOrder();
+            	break;
         	// Product Admin
             case "/admin/product/show":
             	break;

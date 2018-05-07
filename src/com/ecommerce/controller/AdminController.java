@@ -14,11 +14,14 @@ import com.ecommerce.dao.ProductDao;
 import com.ecommerce.model.Product;
 import com.ecommerce.dao.CustomerDao;
 import com.ecommerce.model.Customer;
+import com.ecommerce.dao.OrderDao;
+import com.ecommerce.model.Order;
 
 public class AdminController {
 	private static final long serialVersionUID = 1L;
     private ProductDao productDAO;
     private CustomerDao customerDAO;
+    private OrderDao orderDAO;
     public HttpServletRequest request;
     public HttpServletResponse response;
     
@@ -30,13 +33,15 @@ public class AdminController {
         String jdbcPassword = "root";
  
         productDAO = new ProductDao(jdbcURL, jdbcUsername, jdbcPassword);
-        customerDAO = new CustomerDao(jdbcURL, jdbcUsername, jdbcPassword);        
+        customerDAO = new CustomerDao(jdbcURL, jdbcUsername, jdbcPassword); 
+        orderDAO = new OrderDao(jdbcURL, jdbcUsername, jdbcPassword);
     }
     
     public void showAdmin()
             throws SQLException, IOException, ServletException {
     	request.setAttribute("productSize", productDAO.countProduct());
     	request.setAttribute("customerSize", customerDAO.countCustomer());
+    	request.setAttribute("orderSize", orderDAO.count());
     	RequestDispatcher dispatcher = request.getRequestDispatcher("dashboard.jsp");
         dispatcher.forward(request, response);
     }
@@ -54,6 +59,15 @@ public class AdminController {
         List<Customer> listCustomer = customerDAO.listAllCustomers();
         
         request.setAttribute("listCustomer", listCustomer);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+    public void listOrder()
+            throws SQLException, IOException, ServletException {
+        List<Order> listOrder = orderDAO.all();
+        
+        request.setAttribute("orders", listOrder);
         RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
         dispatcher.forward(request, response);
     }

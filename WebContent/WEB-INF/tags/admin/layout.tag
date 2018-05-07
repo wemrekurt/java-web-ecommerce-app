@@ -40,6 +40,9 @@
       <li class="nav-item">
       	<a class="nav-link" href="${pageContext.request.contextPath}/admin/customer/list">Müşteriler</a>
      	</li>
+     	<li class="nav-item">
+      	<a class="nav-link" href="${pageContext.request.contextPath}/admin/order/list">Siparişler</a>
+     	</li>
     </ul>
     
   </div>

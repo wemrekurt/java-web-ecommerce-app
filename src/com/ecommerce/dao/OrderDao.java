@@ -10,22 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ecommerce.model.Customer;
+import com.ecommerce.model.Order;
+import com.ecommerce.dao.CustomerDao;
 
- 
-/**
- * AbstractDAO.java
- * This DAO class provides CRUD database operations for the table customer
- * in the database.
- * @author www.codejava.net
- *
- */
-public class CustomerDao {
-    private String jdbcURL;
+public class OrderDao {
+	private String jdbcURL;
     private String jdbcUsername;
     private String jdbcPassword;
     private Connection jdbcConnection;
      
-    public CustomerDao(String jdbcURL, String jdbcUsername, String jdbcPassword) {
+    public OrderDao(String jdbcURL, String jdbcUsername, String jdbcPassword) {
         this.jdbcURL = jdbcURL;
         this.jdbcUsername = jdbcUsername;
         this.jdbcPassword = jdbcPassword;
@@ -50,14 +44,16 @@ public class CustomerDao {
         }
     }
      
-    public boolean insertCustomer(Customer customer) throws SQLException {
-        String sql = "INSERT INTO customers (name, email, password, birthday) VALUES (?, ?, ?, ?)";
+    public boolean create(Order order) throws SQLException {
+        String sql = "INSERT INTO orders (num, date, total, address_id, customer_id, status) VALUES (?, ?, ?, ?, ?, ?)";
         connect();        
         PreparedStatement statement = jdbcConnection.prepareStatement(sql);
-        statement.setString(1, customer.getName());
-        statement.setString(2, customer.getEmail());
-        statement.setString(3, customer.getPassword());
-        statement.setString(4, customer.getBirthday());
+        statement.setString(1, order.getNum());
+        statement.setString(2, order.getDate());
+        statement.setFloat(3, order.getTotal());
+        statement.setInt(4, order.getAddress_id());
+        statement.setInt(5, order.getCustomer_id());
+        statement.setInt(6, order.getState());
          
         boolean rowInserted = statement.executeUpdate() > 0;
         statement.close();
@@ -65,8 +61,8 @@ public class CustomerDao {
         return rowInserted;
     }
     
-    public int countCustomer() throws SQLException {
-    	String sql = "SELECT COUNT(*) AS toplam FROM customers";
+    public int count() throws SQLException {
+    	String sql = "SELECT COUNT(*) AS toplam FROM orders";
     	 connect();
          PreparedStatement statement = jdbcConnection.prepareStatement(sql);                  
          ResultSet resultSet = statement.executeQuery();
@@ -75,10 +71,10 @@ public class CustomerDao {
     	 return 0;
     }
      
-    public List<Customer> listAllCustomers() throws SQLException {
-        List<Customer> listCustomer = new ArrayList<>();
+    public List<Order> all() throws SQLException {
+        List<Order> listOrder = new ArrayList<>();
          
-        String sql = "SELECT * FROM customers";
+        String sql = "SELECT * FROM orders";
          
         connect();
          
@@ -87,13 +83,18 @@ public class CustomerDao {
          
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
-            String name = resultSet.getString("name");            
-            String email = resultSet.getString("email");
-            String password = resultSet.getString("password");            
-            String birthday = resultSet.getString("birthday");
+            String num = resultSet.getString("num");            
+            String date = resultSet.getString("date");
+            Float total = resultSet.getFloat("total");            
+            int address_id = resultSet.getInt("address_id");
+            int customer_id = resultSet.getInt("customer_id");
+            int state = resultSet.getInt("status");
+            
+            CustomerDao cdao = new CustomerDao(jdbcURL, jdbcUsername, jdbcPassword);
+            Customer customer = cdao.getCustomer(customer_id);
              
-            Customer customer = new Customer(id, name, email, password, birthday);
-            listCustomer.add(customer);
+            Order order = new Order(id, num, date, total, address_id, customer_id, state, customer);
+            listOrder.add(order);
         }
          
         resultSet.close();
@@ -101,16 +102,16 @@ public class CustomerDao {
          
         disconnect();
          
-        return listCustomer;
+        return listOrder;
     }
      
-    public boolean deleteCustomer(Customer customer) throws SQLException {
-        String sql = "DELETE FROM customers where id = ?";
+    public boolean delete(Order order) throws SQLException {
+        String sql = "DELETE FROM orders where id = ?";
          
         connect();
          
         PreparedStatement statement = jdbcConnection.prepareStatement(sql);
-        statement.setInt(1, customer.getId());
+        statement.setInt(1, order.getId());
          
         boolean rowDeleted = statement.executeUpdate() > 0;
         statement.close();
@@ -118,31 +119,30 @@ public class CustomerDao {
         return rowDeleted;     
     }
      
-    public boolean updateCustomer(Customer customer) throws SQLException {
+    public boolean update(Order order) throws SQLException {
     	//FIXME: check password empty
-        String sql = "UPDATE customers SET name = ?, email = ?, password = ?, birthday = ?";
+        String sql = "UPDATE orders SET num = ?, date = ?, total = ?, address_id = ?, customer_id = ?, status = ?";
         sql += " WHERE id = ?";
         connect();
-         
        
         PreparedStatement statement = jdbcConnection.prepareStatement(sql);
-        statement.setString(1, customer.getName());
-        statement.setString(2, customer.getEmail());
-        statement.setString(3, customer.getPassword());
-        statement.setString(4, customer.getBirthday());
-        statement.setInt(5, customer.getId());
+        statement.setString(1, order.getNum());
+        statement.setString(2, order.getDate());
+        statement.setFloat(3, order.getTotal());
+        statement.setInt(4, order.getAddress_id());
+        statement.setInt(5, order.getCustomer_id());
+        statement.setInt(6, order.getState());
          
         boolean rowUpdated = statement.executeUpdate() > 0;
         statement.close();
         disconnect();
         return rowUpdated;     
-    }
-    
+    }    
     
      
-    public Customer getCustomer(int id) throws SQLException {
-        Customer customer = null;
-        String sql = "SELECT * FROM customers WHERE id = ?";
+    public Order find(int id) throws SQLException {
+        Order order = null;
+        String sql = "SELECT * FROM orders WHERE id = ?";
          
         connect();
          
@@ -152,17 +152,22 @@ public class CustomerDao {
         ResultSet resultSet = statement.executeQuery();
          
         if (resultSet.next()) {
-            String name = resultSet.getString("name");            
-            String email = resultSet.getString("email");
-            String password = resultSet.getString("password");            
-            String birthday = resultSet.getString("birthday");
-             
-            customer = new Customer(id, name, email, password, birthday);
+            String num = resultSet.getString("num");            
+            String date = resultSet.getString("date");
+            Float total = resultSet.getFloat("total");            
+            int address_id = resultSet.getInt("address_id");
+            int customer_id = resultSet.getInt("customer_id");
+            int state = resultSet.getInt("status");
+            CustomerDao cdao = new CustomerDao(jdbcURL, jdbcUsername, jdbcPassword);
+            Customer customer = cdao.getCustomer(customer_id);
+            
+            order = new Order(id, num, date, total, address_id, customer_id, state, customer);
         }
          
         resultSet.close();
         statement.close();
          
-        return customer;
+        return order;
     }
+	
 }
