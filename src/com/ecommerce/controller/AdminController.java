@@ -6,6 +6,7 @@ import java.util.List;
  
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import com.ecommerce.model.Customer;
 import com.ecommerce.dao.OrderDao;
 import com.ecommerce.model.Order;
 import com.ecommerce.helper.OrderHelper;
+import com.ecommerce.helper.Biscuit;
 
 public class AdminController {
 	private static final long serialVersionUID = 1L;
@@ -79,6 +81,9 @@ public class AdminController {
         Order order = orderDAO.find(id);
         OrderHelper ordhelp = new OrderHelper();
         RequestDispatcher dispatcher = request.getRequestDispatcher("show.jsp");
+        Biscuit cookie = new Biscuit(request.getCookies());        
+        request.setAttribute("updateCookie", cookie.getCookie("orderState"));
+        cookie.removeCookie("orderState", response);
         request.setAttribute("states", ordhelp.states());
         request.setAttribute("order", order);
         dispatcher.forward(request, response);

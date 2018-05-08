@@ -4,6 +4,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <z:layout pageTitle="Sipariş: #${order.num}">
+	<c:if test="${updateCookie.length() > 0}">
+		<div class="row">		
+			<div class="alert alert-success" role="alert">
+			  İşlem başarılı.
+			</div>
+		</div>
+	</c:if>
 	<div class="row">
 			<div class="col-md-8">
 				<h3>Sipariş: #${order.num}</h3>
@@ -25,7 +32,7 @@
 		      <select id="inputState" name="state" class="form-control">
 			      <c:forEach var="status" items="${states}">
 							<option <c:if test="${order.state == status.getKey()}">selected</c:if> value="${status.getKey()}">${status.getValue()}</option>
-						</c:forEach>	
+						</c:forEach>
 		      </select>
 		    </div>
 		    
