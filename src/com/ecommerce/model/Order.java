@@ -1,6 +1,7 @@
 package com.ecommerce.model;
 
 import com.ecommerce.model.Customer;
+import com.ecommerce.helper.OrderHelper;
 
 public class Order {
 	protected int id;
@@ -39,18 +40,8 @@ public class Order {
     }
     
     public String showState() {
-    	if(state == 1)
-    		return "Onay Bekliyor";
-    	else if(state == 2)
-    		return "Onaylandı";
-    	else if(state == 3)
-    		return "Paketleniyor";
-    	else if(state == 4)
-    		return "Kargoya Verildi";
-    	else if(state == 5)
-    		return "Teslim Edildi";
-    	else
-    		return "Onay Bekliyor";
+    	OrderHelper orhelp = new OrderHelper();
+    	return orhelp.getState(state);
     }
 
 	public int getState() {

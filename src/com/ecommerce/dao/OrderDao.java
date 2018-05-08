@@ -132,6 +132,7 @@ public class OrderDao {
         statement.setInt(4, order.getAddress_id());
         statement.setInt(5, order.getCustomer_id());
         statement.setInt(6, order.getState());
+        statement.setInt(7, order.getId());
          
         boolean rowUpdated = statement.executeUpdate() > 0;
         statement.close();

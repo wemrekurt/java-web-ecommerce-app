@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.ecommerce.controller.CustomerController;
 import com.ecommerce.controller.ProductController;
 import com.ecommerce.controller.AdminController;
+import com.ecommerce.controller.OrderController;
 
 public class routesController  extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -29,6 +30,8 @@ public class routesController  extends HttpServlet {
         CustomerController customer = new CustomerController(request, response);
         ProductController product = new ProductController(request, response);
         AdminController admin = new AdminController(request, response);
+        OrderController order = new OrderController(request, response);
+        
         try {
             switch (action) {
             case "/show":
@@ -44,6 +47,12 @@ public class routesController  extends HttpServlet {
         	// Order Admin
             case "/admin/order/list":
             	admin.listOrder();
+            	break;
+            case "/admin/order/show":
+            	admin.showOrder();
+            	break;
+            case "/admin/order/chstate":
+            	order.chOrderState();
             	break;
         	// Product Admin
             case "/admin/product/show":

@@ -16,6 +16,7 @@ import com.ecommerce.dao.CustomerDao;
 import com.ecommerce.model.Customer;
 import com.ecommerce.dao.OrderDao;
 import com.ecommerce.model.Order;
+import com.ecommerce.helper.OrderHelper;
 
 public class AdminController {
 	private static final long serialVersionUID = 1L;
@@ -69,6 +70,17 @@ public class AdminController {
         
         request.setAttribute("orders", listOrder);
         RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+    public void showOrder()
+            throws SQLException, IOException, ServletException {
+    	int id = Integer.parseInt(request.getParameter("id"));
+        Order order = orderDAO.find(id);
+        OrderHelper ordhelp = new OrderHelper();
+        RequestDispatcher dispatcher = request.getRequestDispatcher("show.jsp");
+        request.setAttribute("states", ordhelp.states());
+        request.setAttribute("order", order);
         dispatcher.forward(request, response);
     }
     

@@ -49,9 +49,7 @@
 </nav>
     </header>
 	<main role="main">
-		<div class="container">
-		<h1>Yönetim Paneli</h1>
-		<hr />
+		<div class="container" style="margin-top: 15px;">
 		<jsp:doBody/>
 		</div>
 	</main>
