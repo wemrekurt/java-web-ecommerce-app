@@ -6,6 +6,7 @@ public class Customer {
 	protected String email;
 	protected String password;
 	protected String birthday;
+	protected String auth_key;
 	
 	public Customer() {
     }
@@ -14,15 +15,16 @@ public class Customer {
         this.id = id;
     }
 
-	public Customer(String name, String email, String password, String birthday) {
+	public Customer(String name, String email, String password, String birthday, String auth_key) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.birthday = birthday;
+        this.auth_key = auth_key;
     }
- 
-    public Customer(int id, String name, String email, String password, String birthday) {
-        this(name, email, password, birthday);
+
+	public Customer(int id, String name, String email, String password, String birthday, String auth_key) {
+        this(name, email, password, birthday, auth_key);
         this.id = id;
     }   
      
@@ -64,6 +66,14 @@ public class Customer {
 
 	public void setBirthday(String birthday) {
 		this.birthday = birthday;
+	}
+	
+    public String getAuth_key() {
+		return auth_key;
+	}
+
+	public void setAuth_key(String auth_key) {
+		this.auth_key = auth_key;
 	}
 
 

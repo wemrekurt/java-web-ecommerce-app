@@ -69,10 +69,12 @@ public class CustomerController {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         //FIXME: encrypt to md5
+        // FIXME: create auth_key
+        String auth_key = "";
         String password = request.getParameter("password");
         String birthday = request.getParameter("birthday");
  
-        Customer newCustomer = new Customer(name, email, password, birthday);
+        Customer newCustomer = new Customer(name, email, password, birthday, auth_key);
         customerDAO.insertCustomer(newCustomer);
         response.sendRedirect("list");
     }
@@ -84,8 +86,9 @@ public class CustomerController {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String birthday = request.getParameter("birthday");
- 
-        Customer customer = new Customer(id, name, email, password, birthday);
+        String auth_key = request.getParameter("auth_key");
+        
+        Customer customer = new Customer(id, name, email, password, birthday, auth_key);
         customerDAO.updateCustomer(customer);
         response.sendRedirect("list");
     }

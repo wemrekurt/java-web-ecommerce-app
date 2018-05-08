@@ -2,8 +2,12 @@ package com.ecommerce.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
- 
+import java.util.Map;
+
+import com.cloudinary.*;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -85,15 +89,25 @@ public class ProductController extends HttpServlet {
  
     public void updateProduct()
             throws SQLException, IOException {
+
         int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("name");
         String description = request.getParameter("description");
         float price = Float.parseFloat(request.getParameter("price"));
-        String image = request.getParameter("image");
+        //String image = request.getParameter("image");
+        String image = "";
+        //System.out.println(image);
+        
+        Map config = new HashMap();
+        config.put("cloud_name", "wemrekurt");
+        config.put("api_key", "693748312525361");
+        config.put("api_secret", "2UhtZlL-CmiAT3jEhmE154FtEgE");
+        Cloudinary cloudinary = new Cloudinary(config);
  
         Product product = new Product(id, name, description, image, price);
         productDAO.updateProduct(product);
         response.sendRedirect("list");
+        
     }
  
     public void deleteProduct()

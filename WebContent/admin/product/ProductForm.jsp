@@ -34,6 +34,12 @@
   </div>
   
   <div class="form-group">
+    <label for="image">Ürün Görsel</label>
+    <input type="file" id="image" class="form-control" name="image" />
+    <small id="emailHelp" class="form-text text-muted">Ürününüz için görsel seçin</small>
+  </div>
+  
+  <div class="form-group">
     <label for="description">Ürün Açıklaması</label>
     <textarea name="description" id="description" class="form-control"><c:out value='${product.description}' /></textarea>
     <small id="emailHelp" class="form-text text-muted">Ürününüz için bir açıklama girin.</small>

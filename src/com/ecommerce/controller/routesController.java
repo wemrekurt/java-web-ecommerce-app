@@ -1,6 +1,7 @@
 package com.ecommerce.controller;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
  
@@ -14,13 +15,14 @@ import com.ecommerce.controller.CustomerController;
 import com.ecommerce.controller.ProductController;
 import com.ecommerce.controller.AdminController;
 import com.ecommerce.controller.OrderController;
+import com.ecommerce.controller.MainController;
 
 public class routesController  extends HttpServlet {
 	private static final long serialVersionUID = 1L;
  
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+		doGet(request, response);
     }
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -31,11 +33,31 @@ public class routesController  extends HttpServlet {
         ProductController product = new ProductController(request, response);
         AdminController admin = new AdminController(request, response);
         OrderController order = new OrderController(request, response);
+        MainController main = new MainController(request, response);
         
         try {
             switch (action) {
-            case "/show":
+            case "/":
+            	main.index();
+            	break;
+            case "/urun":
             	product.showProduct();
+            	break;
+            case "/hesap-olustur":
+            	main.showCreateAccount();
+            	break;
+            case "/giris-yap":
+            	main.showLogin();
+            	break;
+            case "giris":
+            	main.doLogin();
+            	break;
+        	case "/create-account":
+            	try {
+					main.createCustomer();
+				} catch (NoSuchAlgorithmException e) {
+					e.printStackTrace();
+				}
             	break;
         	// Admin
             case "/404":
@@ -70,8 +92,8 @@ public class routesController  extends HttpServlet {
                 product.showEditForm();
                 break;
             case "/admin/product/update":
-                product.updateProduct();
-                break;
+				product.updateProduct();
+				break;
             case "/admin/product/list":
             	admin.listProduct();
                 break;
@@ -99,12 +121,12 @@ public class routesController  extends HttpServlet {
             default:
             	String path = request.getContextPath();
             	response.setStatus(response.SC_MOVED_TEMPORARILY);
-                response.setHeader("Location", path + "/404");  
-                break;
+                response.setHeader("Location", path + "/404");                  
+            	break;
             }
         } catch (SQLException ex) {
             throw new ServletException(ex);
-        }
+        } 
     }
 	
 	public void showErrorPage(HttpServletRequest request, HttpServletResponse response)

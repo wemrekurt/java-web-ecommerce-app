@@ -51,13 +51,14 @@ public class CustomerDao {
     }
      
     public boolean insertCustomer(Customer customer) throws SQLException {
-        String sql = "INSERT INTO customers (name, email, password, birthday) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO customers (name, email, password, birthday, auth_key) VALUES (?, ?, ?, ?, ?)";
         connect();        
         PreparedStatement statement = jdbcConnection.prepareStatement(sql);
         statement.setString(1, customer.getName());
         statement.setString(2, customer.getEmail());
         statement.setString(3, customer.getPassword());
         statement.setString(4, customer.getBirthday());
+        statement.setString(5, customer.getAuth_key());
          
         boolean rowInserted = statement.executeUpdate() > 0;
         statement.close();
@@ -91,8 +92,9 @@ public class CustomerDao {
             String email = resultSet.getString("email");
             String password = resultSet.getString("password");            
             String birthday = resultSet.getString("birthday");
+            String auth_key = resultSet.getString("auth_key");
              
-            Customer customer = new Customer(id, name, email, password, birthday);
+            Customer customer = new Customer(id, name, email, password, birthday, auth_key);
             listCustomer.add(customer);
         }
          
@@ -120,7 +122,7 @@ public class CustomerDao {
      
     public boolean updateCustomer(Customer customer) throws SQLException {
     	//FIXME: check password empty
-        String sql = "UPDATE customers SET name = ?, email = ?, password = ?, birthday = ?";
+        String sql = "UPDATE customers SET name = ?, email = ?, password = ?, birthday = ?, auth_key = ?";
         sql += " WHERE id = ?";
         connect();
          
@@ -130,6 +132,7 @@ public class CustomerDao {
         statement.setString(2, customer.getEmail());
         statement.setString(3, customer.getPassword());
         statement.setString(4, customer.getBirthday());
+        statement.setString(4, customer.getAuth_key());
         statement.setInt(5, customer.getId());
          
         boolean rowUpdated = statement.executeUpdate() > 0;
@@ -156,8 +159,9 @@ public class CustomerDao {
             String email = resultSet.getString("email");
             String password = resultSet.getString("password");            
             String birthday = resultSet.getString("birthday");
+            String auth_key = resultSet.getString("auth_key");
              
-            customer = new Customer(id, name, email, password, birthday);
+            customer = new Customer(id, name, email, password, birthday, auth_key);
         }
          
         resultSet.close();
