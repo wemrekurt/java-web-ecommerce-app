@@ -46,54 +46,75 @@
 	  color: #818078;
 	  background-color: #fcfcfa;
 	}
+	
+	.clear {
+		margin-top: 20px;
+		display: inline-block;
+	}
+	
+	
 </style>
 
 <title>${pageTitle}</title>
 </head>
 <body>
- <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">E-Ticaret</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    
-    <ul class="navbar-nav mr-auto">
-      
-      <li class="nav-item active">
-        <a class="nav-link" href="./">Anasayfa<span class="sr-only">(current)</span></a>
-      </li>
-      
-      <li class="nav-item">
-       	<a class="nav-link" href="./tum-urunler">Tüm Ürünler</a>
-      </li>
-      
-      <li class="nav-item">
-      	<a class="nav-link" href="#">Hesap</a>
-    	</li>
-      
-      <li class="nav-item">
-      	<a class="nav-link" href="./hesap-olustur">Üye ol</a>
-    	</li>
-    	
-    </ul>
-    
-  </div>
-</nav>
-    </header>
+	<header>
+	  
+	  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+	  	<a class="navbar-brand" href="#">E-Ticaret</a>
+		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		    <span class="navbar-toggler-icon"></span>
+		  </button>
+	
+		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		    
+		    <ul class="navbar-nav mr-auto">
+		      
+		      <li class="nav-item active">
+		        <a class="nav-link" href="${pageContext.request.contextPath}/">Anasayfa<span class="sr-only">(current)</span></a>
+		      </li>
+		      
+		      <li class="nav-item">
+		       	<a class="nav-link" href="${pageContext.request.contextPath}/tum-urunler">Tüm Ürünler</a>
+		      </li>
+		    	
+		    </ul>
+		    
+		    <ul class="nav navbar-nav navbar-right">
+		    	<% if(session.getAttribute("user_auth") == null){ %>
+					<li class="nav-item">
+		      	<a class="nav-link" href="${pageContext.request.contextPath}/hesap-olustur">
+		      		<i class="fa fa-user"></i> Kayıt Ol
+		     		</a>
+		   		</li>
+		      <li class="nav-item">
+		      	<a class="nav-link" href="${pageContext.request.contextPath}/giris-yap">
+		      		<i class="fa fa-user"></i> Giriş Yap
+		     		</a>
+		   		</li>		
+					<%  }else{ %>
+						<li class="nav-item dropdown">
+			        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			          <i class="fa fa-user"></i> <%= session.getAttribute("user_name") %>
+			        </a>
+			        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+			          <a class="dropdown-item" href="${pageContext.request.contextPath}/hesap">Hesabım</a>
+			          <div class="dropdown-divider"></div>
+			          <a class="dropdown-item" href="${pageContext.request.contextPath}/cikis">Çıkış Yap</a>
+			        </div>
+			      </li>							
+					<% } %>
+		      
+		    </ul>
+		    
+		  </div>
+		</nav>
+	</header>
+	
 	<main role="main">
 		<div class="container">
-		<%
-			if(session.getAttribute("user_auth") == null){
-				
-			}else{
-		%>
-				<h1>Üye girmiş</h1>	
-		<% }
-			%>
-		<jsp:doBody/>
+			<div class="clear"></div>
+			<jsp:doBody/>
 		</div>
 	</main>
 </body>

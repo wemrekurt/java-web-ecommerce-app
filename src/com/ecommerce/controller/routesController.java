@@ -49,8 +49,12 @@ public class routesController  extends HttpServlet {
             case "/giris-yap":
             	main.showLogin();
             	break;
-            case "giris":
-            	main.doLogin();
+            case "/giris":
+            	try {
+					main.doLogin();
+				} catch (NoSuchAlgorithmException e) {
+					e.printStackTrace();
+				}
             	break;
         	case "/create-account":
             	try {
@@ -59,6 +63,12 @@ public class routesController  extends HttpServlet {
 					e.printStackTrace();
 				}
             	break;
+        	case "/hesap":
+        		main.showAccount();
+        		break;
+        	case "/cikis":
+        		main.logOut();
+        		break;
         	// Admin
             case "/404":
             	showErrorPage(request, response);

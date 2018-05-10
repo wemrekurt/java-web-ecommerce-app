@@ -50,17 +50,29 @@ public class CustomerDao {
         }
     }
      
-    public boolean insertCustomer(Customer customer) throws SQLException {
+    public int insertCustomer(Customer customer) throws SQLException {
         String sql = "INSERT INTO customers (name, email, password, birthday, auth_key) VALUES (?, ?, ?, ?, ?)";
         connect();        
-        PreparedStatement statement = jdbcConnection.prepareStatement(sql);
+        PreparedStatement statement = jdbcConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, customer.getName());
         statement.setString(2, customer.getEmail());
         statement.setString(3, customer.getPassword());
-        statement.setString(4, customer.getBirthday());
+        if(customer.getBirthday().length() > 0) {        	
+        	statement.setString(4, customer.getBirthday());
+        }else {
+        	statement.setNull(4, java.sql.Types.NULL);
+        }
         statement.setString(5, customer.getAuth_key());
-         
-        boolean rowInserted = statement.executeUpdate() > 0;
+
+
+        int rowInserted =  statement.executeUpdate() ;
+        ResultSet rs = statement.getGeneratedKeys();
+        if (rs.next()){
+            int id = rs.getInt(1);
+            statement.close();
+            disconnect();
+            return id;
+        }
         statement.close();
         disconnect();
         return rowInserted;
@@ -131,9 +143,14 @@ public class CustomerDao {
         statement.setString(1, customer.getName());
         statement.setString(2, customer.getEmail());
         statement.setString(3, customer.getPassword());
-        statement.setString(4, customer.getBirthday());
-        statement.setString(4, customer.getAuth_key());
-        statement.setInt(5, customer.getId());
+        System.out.println(customer.getBirthday());
+        if(customer.getBirthday() != null && customer.getBirthday().length() > 0) {        	
+        	statement.setString(4, customer.getBirthday());
+        }else {
+        	statement.setNull(4, java.sql.Types.NULL);
+        }
+        statement.setString(5, customer.getAuth_key());
+        statement.setInt(6, customer.getId());
          
         boolean rowUpdated = statement.executeUpdate() > 0;
         statement.close();
@@ -169,4 +186,34 @@ public class CustomerDao {
          
         return customer;
     }
+    
+    public Customer find_by_email(String email) throws SQLException {
+        Customer customer = null;
+        String sql = "SELECT * FROM customers WHERE email = ?";
+         
+        connect();
+         
+        PreparedStatement statement = jdbcConnection.prepareStatement(sql);
+        statement.setString(1, email);
+         
+        ResultSet resultSet = statement.executeQuery();
+         
+        if (resultSet.next()) {
+        	int id = resultSet.getInt("id");
+            String name = resultSet.getString("name");       
+            String password = resultSet.getString("password");            
+            String birthday = resultSet.getString("birthday");
+            String auth_key = resultSet.getString("auth_key");
+             
+            customer = new Customer(id, name, email, password, birthday, auth_key);
+        }else {
+        	customer = new Customer(0, "", "", "", "", "");
+        }
+         
+        resultSet.close();
+        statement.close();
+         
+        return customer;
+    }
+    
 }
