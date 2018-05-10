@@ -5,7 +5,7 @@
 <z:layout pageTitle="Giriş Yap">
 	
 	<div class="row" style="margin-top:10px;">
-		<div class="col-md-4 offset-md-4">
+		<div class="col-4 offset-md-4">
 			<c:if test="${show_error}">
 				<div class="alert alert-danger" role="alert">
 				  ${error}

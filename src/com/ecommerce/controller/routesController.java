@@ -22,7 +22,58 @@ public class routesController  extends HttpServlet {
  
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-		doGet(request, response);
+		String action = request.getServletPath();
+        request.setCharacterEncoding("UTF-8");
+        CustomerController customer = new CustomerController(request, response);
+        ProductController product = new ProductController(request, response);
+        AdminController admin = new AdminController(request, response);
+        OrderController order = new OrderController(request, response);
+        MainController main = new MainController(request, response);
+		
+        try {
+            switch (action) {
+            case "/sepete-ekle":
+            	main.addToBasket();
+            	break;
+            case "/giris":
+            	try {
+					main.doLogin();
+				} catch (NoSuchAlgorithmException e) {
+					e.printStackTrace();
+				}
+            	break;
+        	case "/create-account":
+            	try {
+					main.createCustomer();
+				} catch (NoSuchAlgorithmException e) {
+					e.printStackTrace();
+				}
+            	break;
+            case "/admin/order/chstate":
+            	order.chOrderState();
+            	break;
+            case "/admin/product/insert":
+                product.insertProduct();
+                break;            
+            case "/admin/product/update":
+				product.updateProduct();
+				break;            
+            // Customer Admin
+            case "/admin/customer/insert":
+            	customer.insertCustomer();
+                break;
+            case "/admin/customer/update":
+            	customer.updateCustomer();
+                break;
+            default:
+            	String path = request.getContextPath();
+            	response.setStatus(response.SC_MOVED_TEMPORARILY);
+                response.setHeader("Location", path + "/404");                  
+            	break;
+            }
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
+        } 
     }
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -49,30 +100,16 @@ public class routesController  extends HttpServlet {
             case "/giris-yap":
             	main.showLogin();
             	break;
-            case "/giris":
-            	try {
-					main.doLogin();
-				} catch (NoSuchAlgorithmException e) {
-					e.printStackTrace();
-				}
-            	break;
-        	case "/create-account":
-            	try {
-					main.createCustomer();
-				} catch (NoSuchAlgorithmException e) {
-					e.printStackTrace();
-				}
-            	break;
         	case "/hesap":
         		main.showAccount();
         		break;
         	case "/cikis":
         		main.logOut();
         		break;
-        	// Admin
             case "/404":
             	showErrorPage(request, response);
             	break;
+	    	// Admin
             case "/admin/":
             	admin.showAdmin();
             	break;
@@ -83,27 +120,20 @@ public class routesController  extends HttpServlet {
             case "/admin/order/show":
             	admin.showOrder();
             	break;
-            case "/admin/order/chstate":
-            	order.chOrderState();
-            	break;
+            
         	// Product Admin
             case "/admin/product/show":
             	break;
             case "/admin/product/new":
                 product.showNewForm();
                 break;
-            case "/admin/product/insert":
-                product.insertProduct();
-                break;
+            
             case "/admin/product/delete":
                 product.deleteProduct();
                 break;
             case "/admin/product/edit":
                 product.showEditForm();
                 break;
-            case "/admin/product/update":
-				product.updateProduct();
-				break;
             case "/admin/product/list":
             	admin.listProduct();
                 break;
@@ -113,17 +143,11 @@ public class routesController  extends HttpServlet {
             case "/admin/customer/new":
             	customer.showNewForm();
                 break;
-            case "/admin/customer/insert":
-            	customer.insertCustomer();
-                break;
             case "/admin/customer/delete":
             	customer.deleteCustomer();
                 break;
             case "/admin/customer/edit":
             	customer.showEditForm();
-                break;
-            case "/admin/customer/update":
-            	customer.updateCustomer();
                 break;
             case "/admin/customer/list":
             	admin.listCustomer();

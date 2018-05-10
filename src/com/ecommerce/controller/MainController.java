@@ -7,12 +7,14 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
  
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,8 +24,13 @@ import com.ecommerce.dao.ProductDao;
 import com.ecommerce.dao.CustomerDao;
 import com.ecommerce.model.Customer;
 import com.ecommerce.model.Product;
+import com.google.gson.Gson;
 import com.ecommerce.helper.UserSession;
 import com.ecommerce.helper.Hash;
+import com.ecommerce.helper.Pair;
+import com.ecommerce.helper.Basket;
+import com.ecommerce.helper.Biscuit;
+import com.ecommerce.helper.Element;
 
 public class MainController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -53,9 +60,26 @@ public class MainController extends HttpServlet {
         dispatcher.forward(request, response);        
 	}
     
-    public void addToBasket()
+    public void addToBasket() 
     		throws SQLException, IOException, ServletException {
-    	   System.out.println();
+    	
+    	int product_id = Integer.parseInt(request.getParameter("product_id"));
+    	int qty = Integer.parseInt(request.getParameter("qty"));
+    	
+    	List<Element> list = new ArrayList<Element>();
+    	list.add(new Element(product_id, qty));
+    	String json = new Gson().toJson(list);
+    	
+    	Biscuit cookie = new Biscuit(request.getCookies());   
+    	Basket basket = new Basket(cookie);
+    	basket.add(product_id, qty);
+    	
+    	Cookie cook = new Cookie("basket", basket.save());
+    	cook.setMaxAge(10*60);
+        response.addCookie(cook);    	
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(json);
     }
     
     public void showCreateAccount()
