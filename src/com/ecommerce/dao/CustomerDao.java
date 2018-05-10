@@ -51,7 +51,7 @@ public class CustomerDao {
     }
      
     public int insertCustomer(Customer customer) throws SQLException {
-        String sql = "INSERT INTO customers (name, email, password, birthday, auth_key) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO customers (name, email, password, birthday, auth_key, role) VALUES (?, ?, ?, ?, ?, ?)";
         connect();        
         PreparedStatement statement = jdbcConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, customer.getName());
@@ -63,6 +63,7 @@ public class CustomerDao {
         	statement.setNull(4, java.sql.Types.NULL);
         }
         statement.setString(5, customer.getAuth_key());
+        statement.setInt(6, customer.getRole());
 
 
         int rowInserted =  statement.executeUpdate() ;
@@ -105,8 +106,9 @@ public class CustomerDao {
             String password = resultSet.getString("password");            
             String birthday = resultSet.getString("birthday");
             String auth_key = resultSet.getString("auth_key");
+            int role = resultSet.getInt("role");
              
-            Customer customer = new Customer(id, name, email, password, birthday, auth_key);
+            Customer customer = new Customer(id, name, email, password, birthday, auth_key, role);
             listCustomer.add(customer);
         }
          
@@ -134,7 +136,7 @@ public class CustomerDao {
      
     public boolean updateCustomer(Customer customer) throws SQLException {
     	//FIXME: check password empty
-        String sql = "UPDATE customers SET name = ?, email = ?, password = ?, birthday = ?, auth_key = ?";
+        String sql = "UPDATE customers SET name = ?, email = ?, password = ?, birthday = ?, auth_key = ?, role = ?";
         sql += " WHERE id = ?";
         connect();
          
@@ -150,7 +152,8 @@ public class CustomerDao {
         	statement.setNull(4, java.sql.Types.NULL);
         }
         statement.setString(5, customer.getAuth_key());
-        statement.setInt(6, customer.getId());
+        statement.setInt(6, customer.getRole());
+        statement.setInt(7, customer.getId());
          
         boolean rowUpdated = statement.executeUpdate() > 0;
         statement.close();
@@ -177,8 +180,9 @@ public class CustomerDao {
             String password = resultSet.getString("password");            
             String birthday = resultSet.getString("birthday");
             String auth_key = resultSet.getString("auth_key");
+            int role = resultSet.getInt("role");
              
-            customer = new Customer(id, name, email, password, birthday, auth_key);
+            customer = new Customer(id, name, email, password, birthday, auth_key, role);
         }
          
         resultSet.close();
@@ -204,10 +208,11 @@ public class CustomerDao {
             String password = resultSet.getString("password");            
             String birthday = resultSet.getString("birthday");
             String auth_key = resultSet.getString("auth_key");
+            int role = resultSet.getInt("role");
              
-            customer = new Customer(id, name, email, password, birthday, auth_key);
+            customer = new Customer(id, name, email, password, birthday, auth_key, role);
         }else {
-        	customer = new Customer(0, "", "", "", "", "");
+        	customer = new Customer(0, "", "", "", "", "", 1);
         }
          
         resultSet.close();

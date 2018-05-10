@@ -105,6 +105,10 @@ $(document).ready(function(){
 		      <li class="nav-item">
 		       	<a class="nav-link" href="${pageContext.request.contextPath}/tum-urunler">Tüm Ürünler</a>
 		      </li>
+		      
+		      <li class="nav-item">
+		       	<a class="nav-link" href="${pageContext.request.contextPath}/sepet">Sepet</a>
+		      </li>
 		    	
 		    </ul>
 		    

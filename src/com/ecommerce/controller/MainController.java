@@ -8,6 +8,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -22,13 +23,16 @@ import javax.servlet.http.HttpSession;
 
 import com.ecommerce.dao.ProductDao;
 import com.ecommerce.dao.CustomerDao;
+import com.ecommerce.dao.OrderDao;
 import com.ecommerce.model.Customer;
+import com.ecommerce.model.Order;
 import com.ecommerce.model.Product;
 import com.google.gson.Gson;
 import com.ecommerce.helper.UserSession;
 import com.ecommerce.helper.Hash;
 import com.ecommerce.helper.Pair;
 import com.ecommerce.helper.Basket;
+import com.ecommerce.helper.BasketProduct;
 import com.ecommerce.helper.Biscuit;
 import com.ecommerce.helper.Element;
 
@@ -38,6 +42,7 @@ public class MainController extends HttpServlet {
     private CustomerDao customerDAO;
     public HttpServletRequest request;
     public HttpServletResponse response;
+    private OrderDao orderDAO;
     
     public MainController(HttpServletRequest request, HttpServletResponse response) {
     	this.request = request;
@@ -60,6 +65,61 @@ public class MainController extends HttpServlet {
         dispatcher.forward(request, response);        
 	}
     
+    public void showBasket()
+    		throws SQLException, IOException, ServletException {
+    	Biscuit cookie = new Biscuit(request.getCookies());   
+    	Basket basket = new Basket(cookie);
+    	
+    	List<BasketProduct> list = new ArrayList<BasketProduct>();
+    	Product p;
+    	float general = 0;
+		for(Element elem: basket.getItems()) {
+			p = productDAO.getProduct(elem.getProduct_id());
+			general += (p.getPrice() * elem.getQty());
+			list.add(new BasketProduct(elem.getProduct_id(), p, elem.getQty()));
+		}
+		
+		UserSession chkuser = new UserSession(request.getSession());
+    	if(chkuser.logged_in())
+    		request.setAttribute("user_signed_in", true);
+    	else
+    		request.setAttribute("user_signed_in", false);
+    	
+    	
+    	request.setAttribute("basket", list);
+    	request.setAttribute("general", general);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("show_basket.jsp");
+		dispatcher.forward(request, response);       
+    }
+    
+    public void makeOrder()
+    		throws SQLException, IOException, ServletException {
+    	Biscuit cookie = new Biscuit(request.getCookies());   
+    	Basket basket = new Basket(cookie);
+    	Float total = Float.parseFloat(request.getParameter("total"));
+    	
+    	
+    	// String num, String date, float total, int address_id, int customer_id, int state) {
+    	Calendar cal = Calendar.getInstance();
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyMMdd");
+    	String date = sdf.format(cal.getTime());
+    	int user_id = (Integer) request.getSession().getAttribute("user_id");
+    	
+    	
+    	Order order = new Order(date, "2018-01-01", total, 1, user_id, 1);
+    	System.out.println(order.getNum());
+    	System.out.println(order.getDate());
+    	System.out.println(order.getTotal());
+    	System.out.println(order.getAddress_id());
+    	System.out.println(order.getCustomer_id());
+    	System.out.println(order.getState());
+    	int order_id = orderDAO.create(order);
+    	
+    	for(Element elem: basket.getItems()) {
+    		
+    	}
+    }
+    
     public void addToBasket() 
     		throws SQLException, IOException, ServletException {
     	
@@ -75,7 +135,7 @@ public class MainController extends HttpServlet {
     	basket.add(product_id, qty);
     	
     	Cookie cook = new Cookie("basket", basket.save());
-    	cook.setMaxAge(10*60);
+    	cook.setMaxAge(10*60*60);
         response.addCookie(cook);    	
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -127,6 +187,10 @@ public class MainController extends HttpServlet {
     }
     
     public void doLogin() throws SQLException, IOException, ServletException, NoSuchAlgorithmException {
+    	String returnurl = "";
+    	if(request.getParameterMap().containsKey("return") && (request.getParameter("return").length() > 0) )
+    		returnurl = request.getParameter("return");
+    	
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         if(email.length() > 0 && password.length() > 0) {
@@ -143,7 +207,7 @@ public class MainController extends HttpServlet {
             		UserSession session = new UserSession(request.getSession(), auth_key, user.getName(), user.getId());
             		user.setAuth_key(auth_key);
             		customerDAO.updateCustomer(user);
-                	response.sendRedirect("./");
+                	response.sendRedirect("./"+returnurl);
         		}else {
         			request.setAttribute("show_error", true);
                 	request.setAttribute("error", "Hatalı parola!");
@@ -196,7 +260,7 @@ public class MainController extends HttpServlet {
             		Hash hashed_password = new Hash(password);
             		password = hashed_password.getHash();
             		
-            		Customer newCustomer = new Customer(name, email, password, birthday, auth_key);
+            		Customer newCustomer = new Customer(name, email, password, birthday, auth_key, 1);
                     int insertCustomer = customerDAO.insertCustomer(newCustomer);
                     
                     if(insertCustomer > 0) {

@@ -32,6 +32,9 @@ public class routesController  extends HttpServlet {
 		
         try {
             switch (action) {
+            case "/siparis-olustur":
+            	main.makeOrder();
+            	break;
             case "/sepete-ekle":
             	main.addToBasket();
             	break;
@@ -90,6 +93,9 @@ public class routesController  extends HttpServlet {
             switch (action) {
             case "/":
             	main.index();
+            	break;
+            case "/sepet":
+            	main.showBasket();
             	break;
             case "/urun":
             	product.showProduct();

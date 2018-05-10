@@ -73,8 +73,9 @@ public class CustomerController {
         String auth_key = "";
         String password = request.getParameter("password");
         String birthday = request.getParameter("birthday");
- 
-        Customer newCustomer = new Customer(name, email, password, birthday, auth_key);
+        int role = Integer.parseInt(request.getParameter("role"));
+        
+        Customer newCustomer = new Customer(name, email, password, birthday, auth_key, role);
         customerDAO.insertCustomer(newCustomer);
         response.sendRedirect("list");
     }
@@ -87,8 +88,9 @@ public class CustomerController {
         String password = request.getParameter("password");
         String birthday = request.getParameter("birthday");
         String auth_key = request.getParameter("auth_key");
+        int role = Integer.parseInt(request.getParameter("role"));
         
-        Customer customer = new Customer(id, name, email, password, birthday, auth_key);
+        Customer customer = new Customer(id, name, email, password, birthday, auth_key, role);
         customerDAO.updateCustomer(customer);
         response.sendRedirect("list");
     }

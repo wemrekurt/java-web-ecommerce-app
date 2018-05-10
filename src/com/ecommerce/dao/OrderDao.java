@@ -44,18 +44,48 @@ public class OrderDao {
         }
     }
      
-    public boolean create(Order order) throws SQLException {
-        String sql = "INSERT INTO orders (num, date, total, address_id, customer_id, status) VALUES (?, ?, ?, ?, ?, ?)";
+    public int create(Order order) throws SQLException {
+        String sql = "INSERT INTO orders (num, date, total, address_id, customer_id, status) VALUES (?, NULL, ?, ?, ?, ?)";
         connect();        
-        PreparedStatement statement = jdbcConnection.prepareStatement(sql);
+        PreparedStatement statement = jdbcConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, order.getNum());
-        statement.setString(2, order.getDate());
         statement.setFloat(3, order.getTotal());
         statement.setInt(4, order.getAddress_id());
         statement.setInt(5, order.getCustomer_id());
         statement.setInt(6, order.getState());
-         
-        boolean rowInserted = statement.executeUpdate() > 0;
+        
+        int rowInserted =  statement.executeUpdate();
+        ResultSet rs = statement.getGeneratedKeys();
+        if (rs.next()){
+            int id = rs.getInt(1);
+            statement.close();
+            disconnect();
+            return id;
+        }
+        
+        statement.close();
+        disconnect();
+        return rowInserted;
+    }
+    
+    public int create_order_prods(int order_id, int product_id, float unit_price, int size) throws SQLException {
+    	String sql = "INSERT INTO order_products (size, unit_price, product_id, order_id) VALUES (?, ?, ?, ?)";
+    	connect();        
+        PreparedStatement statement = jdbcConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        statement.setInt(1, size);
+        statement.setFloat(2, unit_price);
+        statement.setInt(3, product_id);
+        statement.setInt(4, order_id);
+        
+        int rowInserted =  statement.executeUpdate();
+        ResultSet rs = statement.getGeneratedKeys();
+        if (rs.next()){
+            int id = rs.getInt(1);
+            statement.close();
+            disconnect();
+            return id;
+        }
+        
         statement.close();
         disconnect();
         return rowInserted;

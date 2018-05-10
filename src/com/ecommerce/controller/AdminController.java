@@ -42,52 +42,86 @@ public class AdminController {
     
     public void showAdmin()
             throws SQLException, IOException, ServletException {
-    	request.setAttribute("productSize", productDAO.countProduct());
-    	request.setAttribute("customerSize", customerDAO.countCustomer());
-    	request.setAttribute("orderSize", orderDAO.count());
-    	RequestDispatcher dispatcher = request.getRequestDispatcher("dashboard.jsp");
-        dispatcher.forward(request, response);
+    	if(this.is_admin()) {
+			request.setAttribute("productSize", productDAO.countProduct());
+	    	request.setAttribute("customerSize", customerDAO.countCustomer());
+	    	request.setAttribute("orderSize", orderDAO.count());
+	    	RequestDispatcher dispatcher = request.getRequestDispatcher("dashboard.jsp");
+	        dispatcher.forward(request, response);
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}
     }
+    
     public void listProduct()
             throws SQLException, IOException, ServletException {
-        List<Product> listProduct = productDAO.listAllProducts();
-        
-        request.setAttribute("listProduct", listProduct);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-        dispatcher.forward(request, response);
+    	if(this.is_admin()) {
+	        List<Product> listProduct = productDAO.listAllProducts();
+	        
+	        request.setAttribute("listProduct", listProduct);
+	        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+	        dispatcher.forward(request, response);
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}
     }
     
     public void listCustomer()
             throws SQLException, IOException, ServletException {
-        List<Customer> listCustomer = customerDAO.listAllCustomers();
-        
-        request.setAttribute("listCustomer", listCustomer);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-        dispatcher.forward(request, response);
+    	if(this.is_admin()) {
+	        List<Customer> listCustomer = customerDAO.listAllCustomers();
+	        
+	        request.setAttribute("listCustomer", listCustomer);
+	        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+	        dispatcher.forward(request, response);
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}
     }
     
     public void listOrder()
             throws SQLException, IOException, ServletException {
-        List<Order> listOrder = orderDAO.all();
-        
-        request.setAttribute("orders", listOrder);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-        dispatcher.forward(request, response);
+    	if(this.is_admin()) {
+	        List<Order> listOrder = orderDAO.all();
+	        
+	        request.setAttribute("orders", listOrder);
+	        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+	        dispatcher.forward(request, response);
+	    }else {
+			response.sendRedirect("/E-Commerce");
+		}
     }
     
     public void showOrder()
             throws SQLException, IOException, ServletException {
-    	int id = Integer.parseInt(request.getParameter("id"));
-        Order order = orderDAO.find(id);
-        OrderHelper ordhelp = new OrderHelper();
-        RequestDispatcher dispatcher = request.getRequestDispatcher("show.jsp");
-        Biscuit cookie = new Biscuit(request.getCookies());        
-        request.setAttribute("updateCookie", cookie.getCookie("orderState"));
-        cookie.removeCookie("orderState", response);
-        request.setAttribute("states", ordhelp.states());
-        request.setAttribute("order", order);
-        dispatcher.forward(request, response);
+    	if(this.is_admin()) {
+	    	int id = Integer.parseInt(request.getParameter("id"));
+	        Order order = orderDAO.find(id);
+	        OrderHelper ordhelp = new OrderHelper();
+	        RequestDispatcher dispatcher = request.getRequestDispatcher("show.jsp");
+	        Biscuit cookie = new Biscuit(request.getCookies());        
+	        request.setAttribute("updateCookie", cookie.getCookie("orderState"));
+	        cookie.removeCookie("orderState", response);
+	        request.setAttribute("states", ordhelp.states());
+	        request.setAttribute("order", order);
+	        dispatcher.forward(request, response);
+    	}else {
+			response.sendRedirect("/E-Commerce");
+		}
     }
     
+    public boolean is_admin() throws SQLException, IOException, ServletException {
+    	if(request.getSession().getAttribute("user_id") == null) {
+    		return false;
+    	}else {
+    		int user_id = (Integer) request.getSession().getAttribute("user_id");
+    		Customer user = customerDAO.getCustomer(user_id);
+    		if(user.getId() > 0 && user.getRole() > 1) {
+    			return true;
+    		}else {
+    			return false;
+    		}
+    	}
+    }
     
 }
