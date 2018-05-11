@@ -26,6 +26,7 @@ import com.ecommerce.dao.CustomerDao;
 import com.ecommerce.dao.OrderDao;
 import com.ecommerce.model.Customer;
 import com.ecommerce.model.Order;
+import com.ecommerce.model.OrderProduct;
 import com.ecommerce.model.Product;
 import com.google.gson.Gson;
 import com.ecommerce.helper.UserSession;
@@ -54,6 +55,7 @@ public class MainController extends HttpServlet {
  
         productDAO = new ProductDao(jdbcURL, jdbcUsername, jdbcPassword);
         customerDAO = new CustomerDao(jdbcURL, jdbcUsername, jdbcPassword);
+        orderDAO = new OrderDao(jdbcURL, jdbcUsername, jdbcPassword);
     }
     
     public void index() 
@@ -105,19 +107,28 @@ public class MainController extends HttpServlet {
     	String date = sdf.format(cal.getTime());
     	int user_id = (Integer) request.getSession().getAttribute("user_id");
     	
+    	java.util.Date dt = new java.util.Date();
+    	java.text.SimpleDateFormat spf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	String currentTime = spf.format(dt);   	
     	
-    	Order order = new Order(date, "2018-01-01", total, 1, user_id, 1);
-    	System.out.println(order.getNum());
-    	System.out.println(order.getDate());
-    	System.out.println(order.getTotal());
-    	System.out.println(order.getAddress_id());
-    	System.out.println(order.getCustomer_id());
-    	System.out.println(order.getState());
+    	Order order = new Order(date, currentTime, total, 1, user_id, 1);
     	int order_id = orderDAO.create(order);
     	
-    	for(Element elem: basket.getItems()) {
-    		
+    	if(order_id > 0) {
+	    	for(Element elem: basket.getItems()) {
+	    		Product product = productDAO.getProduct(elem.getProduct_id());
+	    		orderDAO.create_order_prods(order_id, elem.getProduct_id(), product.getPrice(), elem.getQty());
+	    	}
+	    	request.setAttribute("order_num", date + Integer.toString(order_id));
+	    	cookie.removeCookie("basket", response);
+	    	RequestDispatcher dispatcher = request.getRequestDispatcher("success_order.jsp");
+    		dispatcher.forward(request, response);    
+    	}else {
+    		//TODO: Error
     	}
+    	
+    	
+    	
     }
     
     public void addToBasket() 
@@ -168,8 +179,6 @@ public class MainController extends HttpServlet {
     public void showAccount() throws SQLException ,ServletException, IOException {
     	UserSession chkuser = new UserSession(request.getSession());
     	if(chkuser.logged_in()) {
-    		// int user_id = Integer.parseInt();
-    		// Customer user = customerDAO.getCustomer(user_id);
     		int user_id = (Integer) request.getSession().getAttribute("user_id");
     		Customer user = customerDAO.getCustomer(user_id);
     		request.setAttribute("user", user);
@@ -179,6 +188,22 @@ public class MainController extends HttpServlet {
     		response.sendRedirect("./giris-yap");
     	}
     }
+    
+	public void showOrders() throws SQLException ,ServletException, IOException {
+		UserSession chkuser = new UserSession(request.getSession());
+    	if(chkuser.logged_in()) {
+    		int user_id = (Integer) request.getSession().getAttribute("user_id");
+    		Customer user = customerDAO.getCustomer(user_id);
+    		List<Order> orders = orderDAO.find_by_customer_id(user_id);
+    		request.setAttribute("orders", orders);	
+    		request.setAttribute("user", user);
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("orders.jsp");
+    		dispatcher.forward(request, response);
+    	}else {    		
+    		response.sendRedirect("../giris-yap");
+    	}
+		
+	}
     
     public void logOut() throws SQLException ,ServletException, IOException {
     	UserSession user = new UserSession(request.getSession());
@@ -287,5 +312,7 @@ public class MainController extends HttpServlet {
         }
         
     }
+
+
     
 }

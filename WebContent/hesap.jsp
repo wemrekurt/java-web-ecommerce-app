@@ -7,10 +7,10 @@
 		<div class="col-md-4">
 			<hr class="hr-text" data-content="HIZLI MENÜ"/>
 			<div class="list-group">
-			  <button type="button" class="list-group-item list-group-item-action active">
+			  <a href="./hesap" class="list-group-item list-group-item-action active">
 			    Hesabım
-			  </button>
-			  <button type="button" class="list-group-item list-group-item-action">Siparişlerim</button>
+			  </a>
+			  <a href="./hesabim/siparisler" class="list-group-item list-group-item-action">Siparişlerim</a>
 			  <button type="button" class="list-group-item list-group-item-action">Adreslerim</button>
 			</div>
 		</div>

@@ -109,6 +109,9 @@ public class routesController  extends HttpServlet {
         	case "/hesap":
         		main.showAccount();
         		break;
+    		case "/hesabim/siparisler":
+    			main.showOrders();
+    			break;
         	case "/cikis":
         		main.logOut();
         		break;

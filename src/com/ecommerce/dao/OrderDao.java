@@ -45,14 +45,14 @@ public class OrderDao {
     }
      
     public int create(Order order) throws SQLException {
-        String sql = "INSERT INTO orders (num, date, total, address_id, customer_id, status) VALUES (?, NULL, ?, ?, ?, ?)";
+        String sql = "INSERT INTO orders (num, total, address_id, customer_id, status) VALUES (?, ?, ?, ?, ?)";
         connect();        
         PreparedStatement statement = jdbcConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, order.getNum());
-        statement.setFloat(3, order.getTotal());
-        statement.setInt(4, order.getAddress_id());
-        statement.setInt(5, order.getCustomer_id());
-        statement.setInt(6, order.getState());
+        statement.setFloat(2, order.getTotal());
+        statement.setInt(3, order.getAddress_id());
+        statement.setInt(4, order.getCustomer_id());
+        statement.setInt(5, order.getState());
         
         int rowInserted =  statement.executeUpdate();
         ResultSet rs = statement.getGeneratedKeys();
@@ -89,6 +89,40 @@ public class OrderDao {
         statement.close();
         disconnect();
         return rowInserted;
+    }
+    
+    public List<Order> find_by_customer_id(int cus_id) throws SQLException {
+    	List<Order> listOrder = new ArrayList<>();
+        
+        String sql = "SELECT * FROM orders WHERE customer_id = " + Integer.toString(cus_id);
+         
+        connect();
+         
+        Statement statement = jdbcConnection.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String num = resultSet.getString("num");            
+            String date = resultSet.getString("date");
+            Float total = resultSet.getFloat("total");            
+            int address_id = resultSet.getInt("address_id");
+            int customer_id = resultSet.getInt("customer_id");
+            int state = resultSet.getInt("status");
+            
+            CustomerDao cdao = new CustomerDao(jdbcURL, jdbcUsername, jdbcPassword);
+            Customer customer = cdao.getCustomer(customer_id);
+             
+            Order order = new Order(id, num, date, total, address_id, customer_id, state, customer);
+            listOrder.add(order);
+        }
+         
+        resultSet.close();
+        statement.close();
+         
+        disconnect();
+         
+        return listOrder;
     }
     
     public int count() throws SQLException {

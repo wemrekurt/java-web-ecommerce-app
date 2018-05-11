@@ -4,7 +4,17 @@
 
 <z:layout pageTitle="Sepet">
 	<c:if test="${general == 0}">
-		<h1>Sepetiniz Boş</h1>
+		<div class="row">
+			<div class="col-4 offset-md-4" style="text-align: center;">
+				<i class="fa fa-frown" style="color: #844c17; font-size: 15em"></i>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-8 offset-md-2" style="text-align:center;">
+					<h2>Sepetiniz Boş</h2>
+			</div>
+		</div>
 	</c:if>
 	<c:if test="${general > 0}">
 		<div class="row">
