@@ -67,6 +67,14 @@ public class MainController extends HttpServlet {
         dispatcher.forward(request, response);        
 	}
     
+    public void allProducts() 
+    		throws SQLException, IOException, ServletException {
+    	List<Product> listProduct = productDAO.listAllProducts();        
+        request.setAttribute("products", listProduct);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("all_products.jsp");
+        dispatcher.forward(request, response);        
+    }
+    
     public void showBasket()
     		throws SQLException, IOException, ServletException {
     	Biscuit cookie = new Biscuit(request.getCookies());   
