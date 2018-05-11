@@ -3,7 +3,7 @@
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<z:layout pageTitle="jspCommerce">
+<z:layout pageTitle="Tüm Ürünler">
 <div class="">
 		<hr class="hr-text" data-content="Tüm Ürünler" />
 	</div>
