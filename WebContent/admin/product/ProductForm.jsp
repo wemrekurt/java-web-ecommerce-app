@@ -27,6 +27,7 @@
 		<input type="hidden" name="id"
 			value="<c:out value='${product.id}' />" />
 	</c:if>
+
 	 <div class="form-group">
     <label for="name">Ürün Adı</label>
     <input type="text" id="name" class="form-control" name="name" placeholder="Ürün Adı Girin" value="<c:out value='${product.name}' />">

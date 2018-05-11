@@ -16,28 +16,32 @@
 		</div>
 		
 		<div class="col-md-8">
-			<hr class="hr-text" data-content="SİPARİŞLER"/>	
+			<hr class="hr-text" data-content="Sipariş: #${order.num}${order.id} (${order.showState()})"/>	
 			<table class="table table-striped">
 			  <thead>
 			    <tr>
-			      <th scope="col">Sipariş No</th>
-			      <th scope="col">Tarih</th>
-			      <th scope="col">Sipariş Durumu</th>
+			      <th scope="col">Ürün Adı</th>
+			      <th scope="col">Fiyat</th>
+			      <th scope="col">Adet</th>
 			      <th scope="col">Toplam</th>
-			      <th scope="col">#</th>
 			    </tr>
 			  </thead>
 			  <tbody>
-				  <c:forEach var="order" items="${orders}">
+				  <c:forEach var="orp" items="${order_products}">
 						<tr>
-				      <th scope="row">#${order.num}${order.id}</th>
-				      <td>${order.date}</td>
-				      <td>${order.showState()}</td>
-				      <td>${order.total} TL</td>
-				      <td><a href="./siparis?id=${order.id}" class="btn btn-info"><i class="fa fa-eye"></i></a></td>
+				      <th scope="row">${orp.product.name}</th>
+				      <td>${orp.unit_price} TL</td>
+				      <td>${orp.size}</td>
+				      <td>${orp.unit_price * orp.size} TL</td>
+				      
 				    </tr>
 					</c:forEach>
-			    
+			    <tr>
+			    	<td colspan="2"></td>
+				      <td>Genel Toplam:</td>
+				      <td>${order.total} TL</td>
+				      
+				    </tr>
 			  </tbody>
 			</table>
 						

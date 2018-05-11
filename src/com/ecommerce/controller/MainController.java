@@ -94,6 +94,29 @@ public class MainController extends HttpServlet {
 		dispatcher.forward(request, response);       
     }
     
+    public void showOrder() throws SQLException, ServletException, IOException {
+    	int id = Integer.parseInt(request.getParameter("id"));
+    	UserSession chkuser = new UserSession(request.getSession());
+    	if(chkuser.logged_in()) {
+    		int user_id = (Integer) request.getSession().getAttribute("user_id");
+    		Customer user = customerDAO.getCustomer(user_id);
+    		Order order = orderDAO.find(id);
+    		if(order.getCustomer_id() == user_id) {
+    			List<OrderProduct> ordpr = orderDAO.find_order_detail(id);
+    			
+    			request.setAttribute("order_products", ordpr);
+    			request.setAttribute("order", order);
+    			request.setAttribute("user", user);
+    			RequestDispatcher dispatcher = request.getRequestDispatcher("order_detail.jsp");
+    			dispatcher.forward(request, response);
+    		}else {
+    			response.sendRedirect("../");
+    		}
+    	}else {    		
+    		response.sendRedirect("./giris-yap");
+    	}
+    }
+    
     public void makeOrder()
     		throws SQLException, IOException, ServletException {
     	Biscuit cookie = new Biscuit(request.getCookies());   
@@ -120,6 +143,7 @@ public class MainController extends HttpServlet {
 	    		orderDAO.create_order_prods(order_id, elem.getProduct_id(), product.getPrice(), elem.getQty());
 	    	}
 	    	request.setAttribute("order_num", date + Integer.toString(order_id));
+	    	request.setAttribute("total", total);
 	    	cookie.removeCookie("basket", response);
 	    	RequestDispatcher dispatcher = request.getRequestDispatcher("success_order.jsp");
     		dispatcher.forward(request, response);    

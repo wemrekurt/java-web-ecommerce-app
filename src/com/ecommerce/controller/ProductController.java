@@ -2,19 +2,16 @@ package com.ecommerce.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import com.cloudinary.*;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ecommerce.dao.CustomerDao;
 import com.ecommerce.dao.ProductDao;
+import com.ecommerce.model.Customer;
 import com.ecommerce.model.Product;
  
 /**
@@ -23,9 +20,11 @@ import com.ecommerce.model.Product;
  * requests from the user.
  * @author www.codejava.net
  */
+
 public class ProductController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private ProductDao productDAO;
+    private CustomerDao customerDAO;
     public HttpServletRequest request;
     public HttpServletResponse response;
     
@@ -37,7 +36,7 @@ public class ProductController extends HttpServlet {
         String jdbcPassword = "root";
  
         productDAO = new ProductDao(jdbcURL, jdbcUsername, jdbcPassword);
-        
+        customerDAO = new CustomerDao(jdbcURL, jdbcUsername, jdbcPassword); 
     }
  
     
@@ -51,72 +50,98 @@ public class ProductController extends HttpServlet {
     }
     public void listProduct()
             throws SQLException, IOException, ServletException {
-        List<Product> listProduct = productDAO.listAllProducts();
-        
-        request.setAttribute("listProduct", listProduct);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("ProductList.jsp");
-        dispatcher.forward(request, response);
+    	if(this.is_admin()) {    		
+    		List<Product> listProduct = productDAO.listAllProducts();
+    		request.setAttribute("listProduct", listProduct);
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("ProductList.jsp");
+    		dispatcher.forward(request, response);
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}
     }
  
     public void showNewForm()
-            throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("ProductForm.jsp");
-        dispatcher.forward(request, response);
+            throws ServletException, IOException, SQLException {
+    	if(this.is_admin()) {
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("ProductForm.jsp");
+	        dispatcher.forward(request, response);
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}
     }
  
     public void showEditForm()
             throws SQLException, ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        Product existingProduct = productDAO.getProduct(id);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("ProductForm.jsp");
-        request.setAttribute("product", existingProduct);
-        dispatcher.forward(request, response);
+    	if(this.is_admin()) {
+	        int id = Integer.parseInt(request.getParameter("id"));
+	        Product existingProduct = productDAO.getProduct(id);
+	        RequestDispatcher dispatcher = request.getRequestDispatcher("ProductForm.jsp");
+	        request.setAttribute("product", existingProduct);
+	        dispatcher.forward(request, response);
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}  
  
     }
  
     public void insertProduct()
-            throws SQLException, IOException {
-        String name = request.getParameter("name");
-        String description = request.getParameter("description");
-        float price = Float.parseFloat(request.getParameter("price"));
-        //String image = request.getParameter("image");
-        // Image
- 
-        Product newProduct = new Product(name, description, "", price);
-        productDAO.insertProduct(newProduct);
-        response.sendRedirect("list");
+            throws SQLException, IOException, NumberFormatException, ServletException {
+    	if(this.is_admin()) {
+	        String name = request.getParameter("name");
+	        String description = request.getParameter("description");
+	        float price = Float.parseFloat(request.getParameter("price"));
+	        //String image = request.getParameter("image");
+	        // Image
+	 
+	        Product newProduct = new Product(name, description, "", price);
+	        productDAO.insertProduct(newProduct);
+	        response.sendRedirect("list");
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}  
     }
  
     public void updateProduct()
-            throws SQLException, IOException {
-
-        int id = Integer.parseInt(request.getParameter("id"));
-        String name = request.getParameter("name");
-        String description = request.getParameter("description");
-        float price = Float.parseFloat(request.getParameter("price"));
-        //String image = request.getParameter("image");
-        String image = "";
-        //System.out.println(image);
-        
-        Map config = new HashMap();
-        config.put("cloud_name", "wemrekurt");
-        config.put("api_key", "693748312525361");
-        config.put("api_secret", "2UhtZlL-CmiAT3jEhmE154FtEgE");
-        Cloudinary cloudinary = new Cloudinary(config);
- 
-        Product product = new Product(id, name, description, image, price);
-        productDAO.updateProduct(product);
-        response.sendRedirect("list");
-        
+            throws SQLException, IOException, NumberFormatException, ServletException {
+    	if(this.is_admin()) {
+	        int id = Integer.parseInt(request.getParameter("id"));
+	        String name = request.getParameter("name");
+	        String description = request.getParameter("description");
+	        float price = Float.parseFloat(request.getParameter("price"));
+	        String image = "";  
+	
+	        Product product = new Product(id, name, description, image, price);
+	        productDAO.updateProduct(product);
+	        response.sendRedirect("list");
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}  
     }
  
     public void deleteProduct()
-            throws SQLException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
- 
-        Product product = new Product(id);
-        productDAO.deleteProduct(product);
-        response.sendRedirect("list");
- 
+            throws SQLException, IOException, NumberFormatException, ServletException {
+    	if(this.is_admin()) {
+	        int id = Integer.parseInt(request.getParameter("id"));
+	 
+	        Product product = new Product(id);
+	        productDAO.deleteProduct(product);
+	        response.sendRedirect("list");
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}  
+    }
+    
+    public boolean is_admin() throws SQLException, IOException, ServletException {
+    	if(request.getSession().getAttribute("user_id") == null) {
+    		return false;
+    	}else {
+    		int user_id = (Integer) request.getSession().getAttribute("user_id");
+    		Customer user = customerDAO.getCustomer(user_id);
+    		if(user.getId() > 0 && user.getRole() > 1) {
+    			return true;
+    		}else {
+    			return false;
+    		}
+    	}
     }
 }

@@ -11,6 +11,8 @@ import java.util.List;
 
 import com.ecommerce.model.Customer;
 import com.ecommerce.model.Order;
+import com.ecommerce.model.OrderProduct;
+import com.ecommerce.model.Product;
 import com.ecommerce.dao.CustomerDao;
 
 public class OrderDao {
@@ -124,6 +126,36 @@ public class OrderDao {
          
         return listOrder;
     }
+    
+    public List<OrderProduct> find_order_detail(int id) throws SQLException {
+    	List<OrderProduct> listOrder = new ArrayList<>();
+    	String sql = "SELECT * FROM order_products WHERE order_id = " + Integer.toString(id);
+    	connect();
+    	ProductDao pdao = new ProductDao(jdbcURL, jdbcUsername, jdbcPassword);
+    	
+        Statement statement = jdbcConnection.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+         
+        while (resultSet.next()) {
+        	int opid = resultSet.getInt("id");
+        	int size = resultSet.getInt("size");
+        	float unit_price = resultSet.getFloat("unit_price");
+        	Product product = pdao.getProduct(resultSet.getInt("product_id"));
+        	Order order= this.find(resultSet.getInt("order_id"));
+        	
+        	OrderProduct orp = new OrderProduct(opid, size, unit_price, product, order);
+            listOrder.add(orp);
+        }
+        
+        resultSet.close();
+        statement.close();
+         
+        disconnect();
+        
+        return listOrder;
+    }
+    
+    
     
     public int count() throws SQLException {
     	String sql = "SELECT COUNT(*) AS toplam FROM orders";

@@ -94,6 +94,9 @@ public class routesController  extends HttpServlet {
             case "/":
             	main.index();
             	break;
+            case "/hesabim/siparis":
+            	main.showOrder();
+            	break;
             case "/sepet":
             	main.showBasket();
             	break;
