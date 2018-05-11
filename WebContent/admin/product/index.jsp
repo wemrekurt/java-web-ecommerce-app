@@ -25,6 +25,7 @@
             <td>${product.name}</td>
             <td>${product.price}</td>
             <td>
+            <a href="./show?id=<c:out value='${product.id}' />" class="btn btn-info"><i class="fa fa-eye"></i></a>
             <a href="./edit?id=<c:out value='${product.id}' />" class="btn btn-warning"><i class="fa fa-edit"></i></a>
             <a href="./delete?id=<c:out value='${product.id}' />" class="btn btn-danger" onclick="return confirm('Silmek istediğinize emin misiniz?')" ><i class="fa fa-trash"></i></a>
             </td>

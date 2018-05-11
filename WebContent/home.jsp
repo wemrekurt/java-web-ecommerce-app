@@ -54,7 +54,7 @@
 	 	<c:forEach var="product" items="${products}">
 	 		<div class="col-3">
 				<div class="card">
-				  <img class="card-img-top" src="https://vignette.wikia.nocookie.net/roblox-phantom-forces/images/7/7c/Noimage.png/revision/latest?cb=20171115203949" alt="Card image cap">
+				  <img class="card-img-top" src="uploads/${product.id}.png" alt="Card image cap">
 				  <div class="card-body">
 				    <h5 class="card-title">${product.name}</h5>
 				    <p class="card-text">${fn:substring(product.description, 0, 50)}...</p>

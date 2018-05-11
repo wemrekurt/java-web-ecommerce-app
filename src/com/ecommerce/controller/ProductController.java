@@ -1,13 +1,20 @@
 package com.ecommerce.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import com.ecommerce.dao.CustomerDao;
 import com.ecommerce.dao.ProductDao;
@@ -20,9 +27,13 @@ import com.ecommerce.model.Product;
  * requests from the user.
  * @author www.codejava.net
  */
-
+@WebServlet("/FileUploadServlet")
+@MultipartConfig(fileSizeThreshold=1024*1024*10, 	// 10 MB 
+                 maxFileSize=1024*1024*50,      	// 50 MB
+                 maxRequestSize=1024*1024*100)   	// 100 MB
 public class ProductController extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final String UPLOAD_DIR = "uploads";
     private ProductDao productDAO;
     private CustomerDao customerDAO;
     public HttpServletRequest request;
@@ -83,16 +94,51 @@ public class ProductController extends HttpServlet {
     	}  
  
     }
- 
+    
+    public void uploadImage() throws IllegalStateException, IOException, ServletException, SQLException {
+    	String strid = request.getParameter("id");
+    	int id = Integer.parseInt(strid);
+		Product product = productDAO.getProduct(id);
+		
+        String applicationPath = request.getServletContext().getRealPath("");
+        String uploadFilePath = applicationPath + File.separator + UPLOAD_DIR;
+        File fileSaveDir = new File(uploadFilePath);
+        if (!fileSaveDir.exists()) {
+            fileSaveDir.mkdirs();
+        }
+        // System.out.println("Upload File Directory="+fileSaveDir.getAbsolutePath());
+        String fileName = null;
+        
+
+        Part part = request.getPart("image");
+        
+        fileName = getFileName(part);
+        String rename = uploadFilePath + File.separator + strid + ".png";
+        part.write(rename);
+        String[] extension = fileName.split(".");
+        
+        //Files.copy(Paths.get(rename), Paths.get("/home/emrek/eclipse-workspace/E-Commerce/WebContent/images/"+strid+".png"), StandardCopyOption.REPLACE_EXISTING);
+        response.sendRedirect("./show?id="+strid);
+    }
+    
+    private String getFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        System.out.println("content-disposition header= "+contentDisp);
+        String[] tokens = contentDisp.split(";");
+        for (String token : tokens) {
+            if (token.trim().startsWith("filename")) {
+                return token.substring(token.indexOf("=") + 2, token.length()-1);
+            }
+        }
+        return "";
+    }
+    
     public void insertProduct()
             throws SQLException, IOException, NumberFormatException, ServletException {
     	if(this.is_admin()) {
 	        String name = request.getParameter("name");
 	        String description = request.getParameter("description");
-	        float price = Float.parseFloat(request.getParameter("price"));
-	        //String image = request.getParameter("image");
-	        // Image
-	 
+	        float price = Float.parseFloat(request.getParameter("price"));	 
 	        Product newProduct = new Product(name, description, "", price);
 	        productDAO.insertProduct(newProduct);
 	        response.sendRedirect("list");

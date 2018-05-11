@@ -24,11 +24,27 @@
 	<servlet>
 		<servlet-name>routesController</servlet-name>
 		<servlet-class>com.ecommerce.controller.routesController</servlet-class>
+		<multipart-config>
+        <!-- enter your values -->
+        <max-file-size>123456</max-file-size> 
+        <max-request-size>123456</max-request-size>
+        <file-size-threshold>123456</file-size-threshold>
+    </multipart-config>
 	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>routesController</servlet-name>
 		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.jpeg</url-pattern>
+	</servlet-mapping>	
+	
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.png</url-pattern>
 	</servlet-mapping>
 
 	<error-page>

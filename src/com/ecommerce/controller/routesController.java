@@ -58,6 +58,9 @@ public class routesController  extends HttpServlet {
             case "/admin/product/insert":
                 product.insertProduct();
                 break;            
+            case "/admin/product/upload":
+            	product.uploadImage();
+            	break;
             case "/admin/product/update":
 				product.updateProduct();
 				break;            
@@ -135,6 +138,7 @@ public class routesController  extends HttpServlet {
             
         	// Product Admin
             case "/admin/product/show":
+            	admin.productShow();
             	break;
             case "/admin/product/new":
                 product.showNewForm();
@@ -164,10 +168,10 @@ public class routesController  extends HttpServlet {
             case "/admin/customer/list":
             	admin.listCustomer();
                 break;  
-            default:
+            default:  
             	String path = request.getContextPath();
             	response.setStatus(response.SC_MOVED_TEMPORARILY);
-                response.setHeader("Location", path + "/404");                  
+                response.setHeader("Location", path + "/404");  
             	break;
             }
         } catch (SQLException ex) {

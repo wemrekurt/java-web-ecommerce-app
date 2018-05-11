@@ -66,6 +66,18 @@ public class AdminController {
     	}
     }
     
+    public void productShow() throws SQLException, IOException, ServletException {
+    	if(this.is_admin()) {
+    		int id = Integer.parseInt(request.getParameter("id"));
+    		Product existingProduct = productDAO.getProduct(id);
+	        request.setAttribute("product", existingProduct);
+	        RequestDispatcher dispatcher = request.getRequestDispatcher("show.jsp");
+	        dispatcher.forward(request, response);
+    	}else {
+    		response.sendRedirect("/E-Commerce");
+    	}
+    }
+    
     public void listCustomer()
             throws SQLException, IOException, ServletException {
     	if(this.is_admin()) {

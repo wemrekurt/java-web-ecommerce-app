@@ -4,10 +4,10 @@
 
 <z:layout pageTitle="${product.getName()}">
 	<div class="row">
-		<div class="col-4">
-		Ürün Fotoğrafı
+		<div class="col-3">
+			<img src="uploads/${product.id}.png" class="img-fluid" />
 		</div>
-		<div class="col-8">
+		<div class="col-9">
 		
 			<h2>${product.getName()}</h2>
 			<hr class="hr-text" data-content="Ürün Bilgileri">
