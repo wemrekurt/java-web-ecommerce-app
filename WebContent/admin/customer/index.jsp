@@ -13,8 +13,9 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Ürün Adı</th>
-            <th>Fiyat</th>
+            <th>İsim</th>
+            <th>Doğum Tarihi</th>
+            <th>Yetki</th>
             <th>#</th>
         </tr>
     </thead>
@@ -24,6 +25,7 @@
             <td>${customer.id}</td>
             <td>${customer.name}</td>
             <td>${customer.birthday}</td>
+            <td>${customer.role}</td>
             <td>
             <a href="./edit?id=<c:out value='${customer.id}' />" class="btn btn-warning"><i class="fa fa-edit"></i></a>
             <a href="./delete?id=<c:out value='${customer.id}' />" class="btn btn-danger" onclick="return confirm('Silmek istediğinize emin misiniz?')" ><i class="fa fa-trash"></i></a>
