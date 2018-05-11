@@ -10,7 +10,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
-
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/sticky-footer.css" />
 <script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -152,5 +152,14 @@ $(document).ready(function(){
 			<jsp:doBody/>
 		</div>
 	</main>
+	
+	<div style="display:inline-block;height:30px;"></div>
+	
+	<footer class="footer">
+      <div class="container">
+        <span class="text-muted">Copyright 2018 - jspEcommerce</span>
+      </div>
+    </footer>
+	
 </body>
 </html>

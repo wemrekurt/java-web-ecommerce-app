@@ -13,25 +13,25 @@
 		  </ol>
 		  <div class="carousel-inner">
 		    <div class="carousel-item active">
-		      <img class="d-block w-100" src="https://www.butikerva.com.tr/img/blockslideshow/1.jpg" alt="First slide">
+		      <img class="d-block w-100" src="https://images.hepsiburada.net/assets/storefront/banners/11-05-2018_1526020270746_1.png" alt="First slide">
 		      <div class="carousel-caption d-none d-md-block">
-		      	<h5>Başlık</h5>
-    				<p>İçerik</p>
+		      	<h5>Büyük İndirim</h5>
+    				<p>Bu Fırsatı Kaçırmayın</p>
    				</div>
 		    </div>
 		    <div class="carousel-item">
-		      <img class="d-block w-100" src="https://www.butikerva.com.tr/img/blockslideshow/2.jpg" alt="Second slide">
+		      <img class="d-block w-100" src="https://images.hepsiburada.net/assets/storefront/banners/24-04-2018_1525697096190_1.png" alt="Second slide">
 		      
 		      <div class="carousel-caption d-none d-md-block">
-		      	<h5>Başlık</h5>
-    				<p>İçerik</p>
+		      	<h5>Telefon Almanın Vakti</h5>
+    				<p>Sabit kur fırsatı!</p>
    				</div>
 		    </div>
 		    <div class="carousel-item">
-		      <img class="d-block w-100" src="https://www.butikerva.com.tr/img/blockslideshow/3.jpg" alt="Third slide">
+		      <img class="d-block w-100" src="https://images.hepsiburada.net/assets/storefront/banners/11-05-2018_1525854164904_1.png" alt="Third slide">
 		      <div class="carousel-caption d-none d-md-block">
-		      	<h5>Başlık</h5>
-    				<p>İçerik</p>
+		      	<h5>Akıllı Ev Aletleri</h5>
+    				<p>Tıklayın, keşfedin</p>
    				</div>
 		    </div>
 		  </div>
@@ -47,22 +47,34 @@
 	</div>
 	
 	<div class="">
-		<hr />
+		<hr class="hr-text" data-content="Öne Çıkan Ürünler" />
 	</div>
 
 	<div class="row">
 	 	<c:forEach var="product" items="${products}">
-	 		<div class="col-3">
+	 		<div class="col-2">
 				<div class="card">
-				  <img class="card-img-top" src="uploads/${product.id}.png" alt="Card image cap">
+				  <img class="card-img-top" src="uploads/${product.id}.png" style="padding: 5px;" >
 				  <div class="card-body">
-				    <h5 class="card-title">${product.name}</h5>
-				    <p class="card-text">${fn:substring(product.description, 0, 50)}...</p>
-				    <a href="urun?id=<c:out value='${product.id}' />" class="btn btn-primary">İncele</a>
+				    <h5 style="font-size: 13px;" class="card-title">${fn:substring(product.name, 0, 20)}</h5>
+				    <a href="urun?id=<c:out value='${product.id}' />" class="btn btn-primary btn-block">İncele</a>
 				  </div>
 				</div>
 			</div>
 		</c:forEach>
+	</div>
+	
+	<div class="">
+		<hr class="hr-text" data-content="Fırsatlar" />
+	</div>
+	
+	<div class="row">
+		<div class="col-6">
+			<img src="images/sl1.png" class="img-fluid"/>
+		</div>
+		<div class="col-6">
+			<img src="images/sl2.png" class="img-fluid"/>
+		</div>
 	</div>
 
 </z:layout>
